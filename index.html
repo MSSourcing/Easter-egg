@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Candidate Arcade — Cyberpunk Career Hub</title>
+  <meta name="description" content="A cyberpunk, neon‑smooth hub for IT candidates: readable CV/Interview guides, upgraded arcade shooter with UI, quizzes, secrets, and quick links to contact/portfolio." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ====== THEME: CYBERPUNK NEON ====== */
+    :root{
+      --bg:#05060e; --bg2:#0a0f1f; --panel:#0b1028;
+      --txt:#f3f7ff; --muted:#a9b7cf; --alt:#dff3ff;
+      --neon1:#00eaff; --neon2:#ff3fd1; --neon3:#7cff5b; --neon4:#ffd166;
+      --warn:#f59e0b; --danger:#ff4d6d; --border:#1b2a4e;
+      --radius:18px; --shadow:0 14px 40px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; color:var(--txt); font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; line-height:1.65;
+      background: radial-gradient(1200px 540px at 20% -10%, rgba(0,234,255,.09), transparent 60%),
+                  radial-gradient(1000px 520px at 100% 0%, rgba(255,63,209,.08), transparent 60%),
+                  linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      overflow-x:hidden;}
+    /* subtle animated noise */
+    .noise{position:fixed; inset:0; pointer-events:none; opacity:.05; background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><filter id="n"><feTurbulence baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/></filter><rect width="120" height="120" filter="url(%23n)" opacity=".5"/></svg>') repeat; mix-blend-mode:overlay; animation:grain 8s steps(10) infinite}
+    @keyframes grain{0%{transform:translate(0,0)} 10%{transform:translate(-2%,1%)} 20%{transform:translate(1%,-1%)} 30%{transform:translate(3%,2%)} 40%{transform:translate(1%,1%)} 50%{transform:translate(-1%,2%)} 60%{transform:translate(1%,-2%)} 70%{transform:translate(-2%,-1%)} 80%{transform:translate(2%,1%)} 100%{transform:translate(0,0)}}
+
+    /* Neon cursor */
+    body{cursor:none}
+    .neon-cursor{position:fixed; left:0; top:0; width:18px; height:18px; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); box-shadow:0 0 8px var(--neon1),0 0 20px var(--neon1)}
+    .neon-cursor::after{content:""; position:absolute; inset:-10px; border-radius:50%; filter:blur(14px); background:radial-gradient(circle, rgba(0,234,255,.45), rgba(255,63,209,.15) 55%, transparent 70%)}
+
+    header{position:relative; padding:76px 22px 40px; text-align:center;
+      background: radial-gradient(1000px 360px at 50% -20%, rgba(0,234,255,.14), transparent 60%);}
+    .hero{max-width:1100px; margin:0 auto}
+    .badge{display:inline-flex; align-items:center; gap:10px; padding:6px 12px; border-radius:999px;
+      background:linear-gradient(90deg, rgba(0,234,255,.16), rgba(255,63,209,.16)); color:var(--alt); font-weight:700; letter-spacing:.3px; border:1px solid rgba(255,255,255,.1)}
+    h1.glitch{font-family:'Space Grotesk', Inter; font-size: clamp(28px, 6vw, 56px); font-weight:800; letter-spacing:.5px; margin:16px 0 10px; position:relative; display:inline-block; text-shadow:0 2px 0 rgba(0,0,0,.45)}
+    h1.glitch::before, h1.glitch::after{content:attr(data-text); position:absolute; left:0; top:0; width:100%;}
+    h1.glitch::before{transform:translate(2px,0); color:rgba(0,234,255,.75); animation:gl1 4s infinite linear alternate-reverse}
+    h1.glitch::after{transform:translate(-2px,0); color:rgba(255,63,209,.75); animation:gl2 3.7s infinite linear alternate}
+    @keyframes gl1{0%,90%{clip-path:inset(0 0 0 0)}92%{clip-path:inset(10% 0 85% 0)}96%{clip-path:inset(80% 0 5% 0)}100%{clip-path:inset(0 0 0 0)}}
+    @keyframes gl2{0%,88%{clip-path:inset(0 0 0 0)}90%{clip-path:inset(40% 0 40% 0)}95%{clip-path:inset(5% 0 85% 0)}100%{clip-path:inset(0 0 0 0)}}
+    .lead{max-width:900px; margin:0 auto; color:var(--muted); font-size:clamp(16px,2.1vw,19px)}
+
+    .cta-row{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:20px}
+    .btn{border:1px solid rgba(255,255,255,.12); background:linear-gradient(90deg, var(--neon2), var(--neon1)); color:#09111f; padding:12px 16px; border-radius:14px; font-weight:800; cursor:pointer; box-shadow:0 0 14px rgba(0,234,255,.25), 0 0 14px rgba(255,63,209,.18) inset; text-decoration:none; display:inline-block; transition:.2s transform, .2s filter}
+    .btn:hover{transform:translateY(-2px)}
+    .btn.ghost{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); color:var(--alt)}
+
+    nav.sticky{position:sticky; top:0; z-index:10; backdrop-filter: blur(12px); background:rgba(5,7,16,.65); border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav-inner{max-width:1100px; margin:0 auto; display:flex; gap:8px; overflow:auto; padding:8px}
+    .chip{white-space:nowrap; padding:10px 12px; border-radius:999px; background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03)); color:var(--txt); border:1px solid var(--border); cursor:pointer; box-shadow:var(--shadow); text-decoration:none}
+    .chip.active{background:linear-gradient(90deg, rgba(0,234,255,.25), rgba(255,63,209,.25)); color:#fff; border-color:transparent}
+
+    .container{max-width:1100px; margin:36px auto; padding:0 20px}
+    .grid{display:grid; gap:18px}
+    .cols-2{grid-template-columns: repeat(2, minmax(0,1fr));}
+    .cols-3{grid-template-columns: repeat(3, minmax(0,1fr));}
+    @media (max-width:980px){.cols-2,.cols-3{grid-template-columns:1fr}}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); animation:fadein .5s ease}
+    .card h3{margin:0 0 6px; font-family:'Space Grotesk', Inter; letter-spacing:.2px}
+    .muted{color:var(--muted)}
+    @keyframes fadein{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:#0e1a3f; color:#d7e6ff}
+    .kpi{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; background:#0f1a3b; border:1px solid var(--border)}
+
+    .panel-title{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+    .switch{appearance:none; width:52px; height:28px; background:#0f1a3b; border:1px solid var(--border); border-radius:999px; position:relative; cursor:pointer}
+    .switch:checked{background:linear-gradient(90deg, var(--neon2), var(--neon1))}
+    .switch::after{content:""; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:999px; background:#fff; transition:.2s left}
+    .switch:checked::after{left:27px}
+
+    /* Quiz buttons */
+    .quiz .opt{display:block; width:100%; margin:8px 0; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03)); color:var(--txt); cursor:pointer; text-align:left}
+    .quiz .opt:hover{transform:translateY(-1px)}
+    .quiz .opt.correct{border-color:#7cff5b; box-shadow:0 0 10px rgba(124,255,91,.25) inset}
+    .quiz .opt.wrong{border-color:#ff4d6d; box-shadow:0 0 10px rgba(255,77,109,.25) inset}
+
+    .toast{position:fixed; right:16px; bottom:16px; background:#0f1a3b; border:1px solid var(--border); padding:12px 14px; border-radius:12px; box-shadow:var(--shadow); display:none}
+
+    footer{padding:40px 20px; text-align:center; color:var(--muted)}
+
+    .overlay{position:fixed; inset:0; background:rgba(5,8,20,.72); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:20}
+    .overlay .panel{max-width:760px; margin:20px; background:#0f1635; border:1px solid var(--border); border-radius:14px; padding:18px}
+
+    /* Game UI */
+    .game-ui{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    .game-ui .btn{padding:8px 12px; border-radius:10px; font-weight:700}
+    .game-help{margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width:860px){.game-help{grid-template-columns:1fr}}
+
+    /* Logos row */
+    .logos{display:flex; gap:14px; flex-wrap:wrap; align-items:center}
+    .logo-btn{display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03)); text-decoration:none; color:var(--txt); box-shadow:var(--shadow)}
+    .logo-btn svg{width:18px; height:18px; filter:drop-shadow(0 0 6px rgba(0,234,255,.3))}
+
+    @media print{nav.sticky, .noise, .btn, .chip, canvas, .game-ui, .sound, .neon-cursor {display:none!important} .card{background:#fff; border:1px solid #ddd} body{background:#fff; color:#111}}
+  </style>
+</head>
+<body>
+  <div class="neon-cursor" id="neonCursor"></div>
+  <div class="noise" aria-hidden="true"></div>
+  <header>
+    <div class="hero">
+      <span class="badge" id="badge">Candidate Arcade · Cyberpunk Edition</span>
+      <h1 class="glitch" data-text="Level‑up your IT career.">Level‑up your IT career.</h1>
+      <p class="lead">A readable, playful, and practical hub for <strong>all IT candidates</strong>: neon‑clean CV/Interview guides, an arcade shooter with its own UI, quizzes, secrets, and quick ways to reach me. Built to be beautiful, useful, and fast.</p>
+      <div class="cta-row">
+        <a class="btn" href="#about">About</a>
+        <a class="btn" href="#cv">CV</a>
+        <a class="btn" href="#interview">Interview</a>
+        <a class="btn" href="#arcade">Arcade</a>
+        <a class="btn" href="#quiz">Quiz</a>
+        <a class="btn" href="#me">Get to know me</a>
+        <a class="btn ghost sound" id="soundToggle" href="#">Enable sound</a>
+        <a class="btn ghost" id="helpBtn" href="#">?</a>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sticky" aria-label="Sections">
+    <div class="nav-inner">
+      <a class="chip active" href="#about">About</a>
+      <a class="chip" href="#cv">CV Tips</a>
+      <a class="chip" href="#interview">Interview Prep</a>
+      <a class="chip" href="#offer">Salary & Offers</a>
+      <a class="chip" href="#portfolio">Portfolio</a>
+      <a class="chip" href="#networking">Networking</a>
+      <a class="chip" href="#arcade">Arcade</a>
+      <a class="chip" href="#quiz">Quiz</a>
+      <a class="chip" href="#me">About Mati</a>
+      <a class="chip" href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section id="about" class="grid cols-3">
+      <div class="card">
+        <h3>What makes me different</h3>
+        <p class="muted">I optimise for <em>signal</em> over noise: real outcomes, thoughtful craft, and your long‑term arc. Expect transparency, preparation, and creative artifacts (like this page) that make the journey lighter.</p>
+        <div class="grid cols-2" style="margin-top:8px">
+          <div class="pill">Depth‑first feedback</div>
+          <div class="pill">Realistic salary ranges</div>
+          <div class="pill">Interview dry‑runs</div>
+          <div class="pill">Role maps & skill gaps</div>
+          <div class="pill">Async & respectful comms</div>
+          <div class="pill">No buzzword bingo</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>How to use this hub</h3>
+        <ul>
+          <li>Apply the <strong>M³ rule</strong>: <em>Metric → Mechanism → Meaning</em>.</li>
+          <li>Play the arcade: collect <strong>signal</strong>, avoid <strong>noise</strong>, beat bosses.</li>
+          <li>Run the quiz to surface quick gaps.</li>
+          <li>Open the <strong>help ( ? )</strong> overlay for hotkeys & secrets.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Quick links</h3>
+        <div class="logos">
+          <a class="logo-btn" href="https://calendly.com/mateuszsiekierka-ntiative/new-meeting-1" target="_blank" rel="noopener" title="Calendly">
+            <svg viewBox="0 0 24 24" fill="none" stroke="url(#g1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00eaff"/><stop offset="100%" stop-color="#ff3fd1"/></linearGradient></defs><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M7 2v4M17 2v4M3 10h18"/></svg>
+            <span>Book</span>
+          </a>
+          <a class="logo-btn" href="https://github.com/mssourcing" target="_blank" rel="noopener" title="GitHub">
+            <svg viewBox="0 0 24 24" fill="url(#g2)" aria-hidden="true"><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff3fd1"/><stop offset="100%" stop-color="#00eaff"/></linearGradient></defs><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.42c.58.11.79-.25.79-.55v-2.07c-3.22.7-3.9-1.55-3.9-1.55-.53-1.36-1.29-1.72-1.29-1.72-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.74 1.27 3.41.97.1-.76.41-1.27.74-1.56-2.57-.29-5.27-1.28-5.27-5.68 0-1.26.45-2.29 1.2-3.1-.12-.29-.52-1.47.11-3.06 0 0 .98-.31 3.2 1.19a11.05 11.05 0 0 1 5.82 0c2.22-1.5 3.2-1.19 3.2-1.19.63 1.59.23 2.77.11 3.06.75.81 1.2 1.84 1.2 3.1 0 4.41-2.71 5.38-5.29 5.66.42.36.79 1.06.79 2.14v3.17c0 .3.21.66.8.55A11.5 11.5 0 0 0 12 .5z"/></svg>
+            <span>GitHub</span>
+          </a>
+          <a class="logo-btn" href="https://www.linkedin.com/in/mateuszsiekierka/" target="_blank" rel="noopener" title="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="url(#g3)" aria-hidden="true"><defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00eaff"/><stop offset="100%" stop-color="#7cff5b"/></linearGradient></defs><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5.001 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h4v1.88h.06A4.39 4.39 0 0 1 17 8.76c3.2 0 3.79 2.1 3.79 4.83V21h-4v-6.2c0-1.48-.03-3.39-2.07-3.39-2.07 0-2.39 1.62-2.39 3.29V21H9z"/></svg>
+            <span>LinkedIn</span>
+          </a>
+          <a class="logo-btn" href="https://x.com/vitrvagabond" target="_blank" rel="noopener" title="X/Twitter">
+            <svg viewBox="0 0 24 24" fill="url(#g4)" aria-hidden="true"><defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff3fd1"/><stop offset="100%" stop-color="#ffd166"/></linearGradient></defs><path d="M18.9 2H21l-5.2 5.9 6.1 8.1h-4.8l-3.5-4.7-4 4.7H3l5.6-6.6L2.2 2h5l3.1 4.2L18.9 2z"/></svg>
+            <span>X</span>
+          </a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Open portals</h3>
+        <p class="muted">Each tab can open as its own site. Click below to launch a section in a new window with a slick transition.</p>
+        <div class="logos">
+          <a class="logo-btn" href="#cv" onclick="openPortal('cv');return false;">CV portal</a>
+          <a class="logo-btn" href="#interview" onclick="openPortal('interview');return false;">Interview portal</a>
+          <a class="logo-btn" href="#arcade" onclick="openPortal('arcade');return false;">Arcade portal</a>
+          <a class="logo-btn" href="#me" onclick="openPortal('me');return false;">About‑me portal</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="cv" class="grid cols-2">
+      <div class="card">
+        <div class="panel-title"><h3>CV Essentials (M³)</h3> <span class="pill">Keep it 1–2 pages</span></div>
+        <p class="muted">Every impact line should include a number, the mechanism you touched, and why it mattered. Example:</p>
+        <div class="kpi">“Reduced LCP 3.9s → 1.8s (−54%) in 5 weeks via Next.js SSR & image CDN; <em>+6% completed sign‑ups</em>.”</div>
+        <ul>
+          <li><strong>Metric</strong>: from→to delta, timeframe, source (e.g., Datadog, BigQuery, Lighthouse).</li>
+          <li><strong>Mechanism</strong>: what you changed — architecture, patterns, controls.</li>
+          <li><strong>Meaning</strong>: tie it to users or the business.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>ATS‑friendly skeleton</h3>
+<pre class="kpi" style="white-space:pre-wrap">FULL NAME — Title (e.g., Senior Engineer)
+City · Email · Phone · LinkedIn · GitHub
+
+SUMMARY — 2–4 lines tailored to the role (stack, scale, 1–2 measurable outcomes)
+
+CORE SKILLS — your real core, not a dictionary
+
+EXPERIENCE
+Company — Role (YYYY–YYYY)
+• Impact bullet (M³)
+• Depth bullet (trade‑offs, reliability, observability)
+• Collaboration/mentoring
+
+EDUCATION & CERTS — optional
+PROJECTS — optional, if relevant
+</pre>
+      </div>
+    </section>
+
+    <section id="interview" class="grid cols-3">
+      <div class="card">
+        <h3>Interview quick‑prep</h3>
+        <ul>
+          <li>Prepare a <strong>5‑minute system design</strong> story with diagrams.</li>
+          <li>Own a <strong>failure story</strong> and the fix (runbooks, SLOs, tests).</li>
+          <li>Have 3 <strong>M³ bullets</strong> you’re proud of.</li>
+          <li>Clarify what you want next: <em>learning</em>, <em>impact</em>, <em>team</em>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Behavioral scaffold</h3>
+        <p class="muted">STAR works; I prefer <strong>PRIME</strong> — Problem, Reasoning, Impact, Method, Evidence.</p>
+        <div class="kpi">“Problem: flaky deploys → Reasoning: missing test pyramid → Method: trunk‑based + CI gates → Impact: incidents −40% → Evidence: dashboards.”</div>
+      </div>
+      <div class="card">
+        <h3>Anti‑fluff checklist</h3>
+        <ul>
+          <li>Replace “helped”, “worked on” → with measurable verbs.</li>
+          <li>Cut tool laundry lists; emphasize <em>depth</em> and <em>trade‑offs</em>.</li>
+          <li>If you don’t know, say so and show how you’d find out.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="offer" class="grid cols-3">
+      <div class="card">
+        <h3>Salary & Offer Playbook</h3>
+        <ul>
+          <li>Know your <strong>walk‑away</strong> and your <strong>BATNA</strong>.</li>
+          <li>Negotiate <em>package</em>, not just salary: base, bonus, equity, WFH budget, education.</li>
+          <li>Ask for <strong>leveling rubric</strong> and growth path in writing.</li>
+          <li>Align start date with <strong>vesting</strong> or bonus timelines.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Offer evaluation checklist</h3>
+        <ul>
+          <li>Team quality: manager, peer loop signals.</li>
+          <li>Problem fit: do you want these problems for 2 years?</li>
+          <li>Learning pace: seniors to learn from? time for craft?</li>
+          <li>Life fit: remote, timezones, flexibility.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Negotiation scripts</h3>
+        <div class="kpi" style="white-space:pre-wrap">“I\'m excited. Given my impact in X and market data at Y–Z, can we explore a base in <strong>A–B</strong>? I\'m ready to sign if we can align on this.”</div>
+      </div>
+    </section>
+
+    <section id="portfolio" class="grid cols-3">
+      <div class="card">
+        <h3>Portfolio that lands interviews</h3>
+        <ul>
+          <li>Short case studies: problem → approach → measurable result.</li>
+          <li>Diagrams over paragraphs; code snippets sparingly.</li>
+          <li>Live demos or GIFs; README with quick start.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Project story template</h3>
+        <div class="kpi" style="white-space:pre-wrap">Context → Constraints → Options → Decision → Result (with numbers) → Lessons</div>
+      </div>
+      <div class="card">
+        <h3>Tech writing mini‑guide</h3>
+        <ul>
+          <li>One idea per page. Title = promise of value.</li>
+          <li>Examples > assertions. Show your work.</li>
+          <li>Prefer diagrams + bullets + code comments.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="networking" class="grid cols-2">
+      <div class="card">
+        <h3>Networking that works</h3>
+        <p class="muted">Reach out with value. A simple DM template:</p>
+        <div class="kpi" style="white-space:pre-wrap">Hi &lt;Name&gt;, loved your post on &lt;topic&gt;. I built &lt;small demo&gt; exploring &lt;idea&gt;. Would you be open to a 15‑min chat? Either way, here\'s the repo: &lt;link&gt; — Cheers!</div>
+        <ul>
+          <li>Comment with substance; avoid generic “great post”.</li>
+          <li>Show curiosity; ask concrete questions.</li>
+          <li>Give before you ask.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Remote comms, done right</h3>
+        <ul>
+          <li>Asynchronous first: clear titles, TL;DR, decision logs.</li>
+          <li>Disagree & commit: capture decisions in writing.</li>
+          <li>Own your metrics; publish dashboards.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="arcade" class="card">
+      <div class="panel-title"><h3>Arcade Shooter: Signal vs Noise</h3>
+        <div class="game-ui">
+          <button class="btn" id="btnStart">Start</button>
+          <button class="btn ghost" id="btnPause">Pause</button>
+          <button class="btn ghost" id="btnReset">Reset</button>
+          <span class="pill" id="scorePill">Score: 0</span>
+          <span class="pill" id="livesPill">Lives: 3</span>
+          <span class="pill" id="levelPill">Level: 1</span>
+        </div>
+      </div>
+      <canvas id="game" width="720" height="460" role="img" aria-label="Arcade shooter canvas" style="border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#060a1a"></canvas>
+      <div class="game-help">
+        <div class="kpi"><strong>Controls:</strong> Move: ◀ ▶ / A D · <strong>Up/Down:</strong> ▲ ▼ / W S · Shoot: Space · Pause: P · Mobile: tap left/right; tap top to shoot.</div>
+        <div class="kpi"><strong>Power‑ups:</strong> Rapid fire, Spread shot, Shield, Bonus x2. Boss every 4 levels.</div>
+      </div>
+    </section>
+
+    <section id="quiz" class="card quiz">
+      <div class="panel-title"><h3>8‑question lightning quiz</h3><button class="btn ghost" id="startQuiz">Start / Reset</button></div>
+      <div id="qBox"><q>Press Start to begin.</q></div>
+      <div id="aBox"></div>
+      <div id="rBox" class="muted" style="margin-top:10px"></div>
+    </section>
+
+    <section id="me" class="grid cols-2">
+      <div class="card">
+        <h3>Get to know me</h3>
+        <p class="muted">I’m Mati — a senior IT recruiter who appreciates <strong>engineering depth</strong>, honest communication, and a bit of creativity. I care about velocity without sacrificing craft.</p>
+        <ul>
+          <li>Interests: physics, astronomy, space exploration, human performance.</li>
+          <li>Favorite conversation starter: systems you’re proud of & why.</li>
+          <li>How I help: measurable CV feedback, interview dry‑runs, real ranges.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Drop me an interesting message</h3>
+        <p class="muted">Got a cool project, graph, or metric story? Send me a note.</p>
+        <form onsubmit="sendMessage(event)">
+          <label>Subject<input id="msgSubj" type="text" placeholder="e.g., Scaling Postgres for fun" style="width:100%; padding:10px; border-radius:10px; background:#0f1a3b; border:1px solid var(--border); color:var(--txt)"></label>
+          <div style="height:8px"></div>
+          <label>Message<textarea id="msgBody" rows="4" placeholder="Tell me a story with numbers…" style="width:100%; padding:10px; border-radius:10px; background:#0f1a3b; border:1px solid var(--border); color:var(--txt)"></textarea></label>
+          <div style="height:10px"></div>
+          <button class="btn" type="submit">Open email</button>
+          <button class="btn ghost" type="button" onclick="copyMessage()">Copy to clipboard</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="contact" class="card">
+      <h3>Contact & Socials</h3>
+      <div class="logos">
+        <a class="logo-btn" href="https://calendly.com/mateuszsiekierka-ntiative/new-meeting-1" target="_blank" rel="noopener" title="Calendly">📅 <span>Calendly</span></a>
+        <a class="logo-btn" href="https://github.com/mssourcing" target="_blank" rel="noopener" title="GitHub">🐙 <span>GitHub</span></a>
+        <a class="logo-btn" href="https://www.linkedin.com/in/mateuszsiekierka/" target="_blank" rel="noopener" title="LinkedIn">🔗 <span>LinkedIn</span></a>
+        <a class="logo-btn" href="https://x.com/vitrvagabond" target="_blank" rel="noopener" title="X/Twitter">𝕏 <span>X</span></a>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Copied to clipboard</div>
+
+  <footer>Candidate Arcade · Cyberpunk • Secrets: Konami, type <em>NEON</em>/<em>CYBER</em>/<em>HIREME</em> · Double‑click the header badge</footer>
+
+  <!-- Help Overlay -->
+  <div class="overlay" id="helpOverlay" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="panel">
+      <h3 id="helpTitle">Hotkeys & Secrets</h3>
+      <ul>
+        <li><strong>Move</strong>: ◀ ▶ / A D · <strong>Up/Down</strong>: ▲ ▼ / W S · <strong>Shoot</strong>: Space · <strong>Pause</strong>: P</li>
+        <li><strong>Konami</strong>: unlock Cosmic Mode</li>
+        <li><strong>Type</strong> <em>NEON</em>: neon boost · <em>CYBER</em>: scanlines · <em>HIREME</em>: resource drop</li>
+        <li><strong>Double‑click</strong> header badge: Offer negotiation cheatsheet</li>
+      </ul>
+      <div class="kpi" id="secretDrop" style="display:none; margin-top:8px"></div>
+      <div style="text-align:right; margin-top:10px"><button class="btn ghost" id="closeHelp">Close</button></div>
+    </div>
+  </div>
+
+  <script>
+    /* ===== Neon cursor ===== */
+    const neon = document.getElementById('neonCursor');
+    window.addEventListener('pointermove', (e)=>{ neon.style.left=e.clientX+'px'; neon.style.top=e.clientY+'px'; });
+
+    /* ===== Sound engine (WebAudio) ===== */
+    let audioCtx, soundOn = false, ambience = null;
+    function ensureAudio(){ if (!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return audioCtx; }
+    function tone(freq=440, dur=0.08, type='square', gain=0.02){ if(!soundOn||!ensureAudio()) return; const ctx=audioCtx; const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.value=freq; g.gain.value=gain; o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime+dur); }
+    function chord(fs=[660,880,990], dur=0.12){ fs.forEach((f,i)=>setTimeout(()=>tone(f,dur,'square',0.02), i*15)); }
+    function startAmbience(){ if(!ensureAudio()) return; stopAmbience(); const ctx=audioCtx; const o=ctx.createOscillator(), g=ctx.createGain(); o.type='sawtooth'; o.frequency.value=70; const lfo=ctx.createOscillator(), lg=ctx.createGain(); lfo.frequency.value=0.12; lg.gain.value=40; lfo.connect(lg); lg.connect(o.frequency); g.gain.value=0.006; o.connect(g); g.connect(ctx.destination); o.start(); lfo.start(); ambience={o,lfo,g}; }
+    function stopAmbience(){ if(ambience){ try{ ambience.o.stop(); ambience.lfo.stop(); }catch(e){} ambience=null; } }
+
+    const soundToggle=document.getElementById('soundToggle');
+    soundToggle.addEventListener('click', (e)=>{ e.preventDefault(); soundOn=!soundOn; if(soundOn){ soundToggle.textContent='Sound on ✓'; chord(); startAmbience(); } else { soundToggle.textContent='Enable sound'; stopAmbience(); }
+    });
+
+    function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none', 1800); }
+
+    // Sticky nav chip active
+    document.querySelectorAll('nav .chip').forEach(ch=>ch.addEventListener('click',()=>{ document.querySelectorAll('nav .chip').forEach(c=>c.classList.remove('active')); ch.classList.add('active'); }));
+
+    // Help overlay
+    const help=document.getElementById('helpOverlay');
+    document.getElementById('helpBtn').addEventListener('click', (e)=>{ e.preventDefault(); help.style.display='flex'; });
+    document.getElementById('closeHelp').addEventListener('click', ()=> help.style.display='none');
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') help.style.display='none'; });
+
+    // Badge double‑click → cheat sheet
+    document.getElementById('badge').addEventListener('dblclick',()=>{ help.style.display='flex'; const box=document.getElementById('secretDrop'); box.style.display='block'; box.textContent='Offer cheatsheet: Ask for leveling rubric, negotiate package not just base, align start date with vesting, and get the scope in writing.'; });
+
+    // Portals (standalone mini-sites)
+    function openPortal(section){
+      const node = document.getElementById(section);
+      if(!node){ showToast('Section not found'); return; }
+      const w = window.open('', '_blank');
+      if(!w){ showToast('Popup blocked'); return; }
+      const content = node.outerHTML;
+      const html = `<!DOCTYPE html><html lang="en"><head>
+        <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>${section} — Candidate Arcade</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+        <style>
+          :root{--bg:#05060e;--bg2:#0a0f1f;--txt:#f3f7ff;--muted:#a9b7cf;--border:#1b2a4e}
+          body{margin:0; font-family:Inter,system-ui; color:var(--txt); background:linear-gradient(180deg,var(--bg),var(--bg2));}
+          .container{max-width:1100px;margin:28px auto;padding:0 20px}
+          .card{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.12); border-radius:16px; padding:18px}
+          a.back{display:inline-block;margin:16px 0;color:#9ed1ff}
+        </style>
+      </head><body>
+        <div class="container">
+          <a class="back" href="${location.href}" target="_self">← Back to full site</a>
+          ${content}
+        </div>
+      </body></html>`;
+      w.document.open(); w.document.write(html); w.document.close();
+    }
+    window.openPortal = openPortal;
+
+    // Message helpers
+    function sendMessage(e){ e.preventDefault(); const s=encodeURIComponent(document.getElementById('msgSubj').value||'Hello'); const b=encodeURIComponent(document.getElementById('msgBody').value||''); window.location.href=`mailto:mati@example.com?subject=${s}&body=${b}`; }
+    function copyMessage(){ const s=document.getElementById('msgSubj').value||'Hello'; const b=document.getElementById('msgBody').value||''; navigator.clipboard.writeText(`Subject: ${s}\n\n${b}`); showToast('Copied! Paste into any email or DM.'); }
+    window.sendMessage=sendMessage; window.copyMessage=copyMessage;
+
+    // Secrets: Konami + typed words
+    const KONAMI=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+    let buffer=[];
+    window.addEventListener('keydown',e=>{ buffer.push(e.key); buffer=buffer.slice(-12); if(JSON.stringify(buffer).toLowerCase()===JSON.stringify(KONAMI).toLowerCase()){ unlockCosmic(); }
+      const last = buffer.join('').replace(/Arrow(Up|Down|Left|Right)/g,''); if(/neon/i.test(last)) neonBoost(); if(/cyber/i.test(last)) scanlines(); if(/hireme/i.test(last)) dropResources(); });
+    function unlockCosmic(){ tone(880,0.1); tone(660,0.1); tone(990,0.1); document.body.style.background='radial-gradient(1200px 540px at 10% -10%, rgba(124,255,91,.1), transparent 60%), radial-gradient(1000px 520px at 100% 0%, rgba(0,234,255,.12), transparent 60%), linear-gradient(180deg, #03040a 0%, #06091a 100%)'; showToast('Cosmic Mode ✦'); }
+    function neonBoost(){ neon.style.boxShadow='0 0 10px var(--neon2),0 0 28px var(--neon2)'; showToast('Neon boost!'); }
+    function scanlines(){ document.body.style.backgroundSize='auto'; document.body.style.backgroundImage += ', repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0, rgba(255,255,255,.02) 1px, transparent 1px, transparent 3px)'; showToast('Scanlines on'); }
+    function dropResources(){ help.style.display='flex'; const box=document.getElementById('secretDrop'); box.style.display='block'; box.textContent='Resource drop: CV bullet templates, interview question bank, negotiation scripts — ping me to get the latest pack.'; }
+
+    // Helpful tip toast during gameplay
+    const tips=[
+      'Tip: Speak in deltas (from→to) and timeframe.',
+      'Tip: Evidence beats adjectives — link dashboards.',
+      'Tip: Tell the trade‑off you chose and why.',
+      'Tip: Lead time & MTTR show delivery flow.',
+      'Tip: Prefer diagrams + bullets over walls of text.'
+    ];
+    function showTip(){ const t=tips[Math.floor(Math.random()*tips.length)]; showToast(t); }
+
+    /* ===== Arcade Shooter with robust UI (Up/Down + Game Over screen) ===== */
+    const W=720,H=460, canvas=document.getElementById('game'), g=canvas.getContext('2d');
+    let running=false, paused=false, started=false, score=0, lives=3, level=1, frame=0;
+
+    const player={x:W/2, y:H-60, vx:0, speed:4, w:28, h:18, fireCd:0, fireRate:10, spread:false, shield:0};
+    const bullets=[], ebullets=[], enemies=[], powerups=[], particles=[];
+
+    function resetGame(){ running=false; paused=false; started=false; score=0; lives=3; level=1; frame=0; bullets.length=0; ebullets.length=0; enemies.length=0; powerups.length=0; particles.length=0; player.x=W/2; player.y=H-60; player.fireCd=0; player.fireRate=10; player.spread=false; player.shield=0; draw(); overlay('Press Start'); }
+
+    function overlay(text){ g.save(); g.fillStyle='rgba(0,0,0,.55)'; g.fillRect(0,0,W,H); g.fillStyle='#dff3ff'; g.font='bold 24px Inter'; g.textAlign='center'; g.fillText(text, W/2, H/2); g.font='14px Inter'; g.fillText('Use Start / Pause / Reset or keyboard controls.', W/2, H/2+26); g.restore(); }
+
+    function startGame(){ if(started) return; started=true; running=true; paused=false; loop(); }
+    function pauseGame(){ if(!started) return; paused=!paused; if(!paused && running) loop(); draw(); if(paused) overlay('Paused'); }
+    function loop(){ if(!running||paused) return; step(); frame++; requestAnimationFrame(loop); }
+
+    function spawnEnemy(){ const r=Math.random(); let type='zig', hp=2, vx=0, vy=1.2+level*0.1, cd=60+Math.random()*60; if(r<0.4){ type='zig'; hp=2; } else if(r<0.75){ type='pursuer'; hp=3; } else { type='bomber'; hp=3; } const x=Math.random()*(W-40)+20; const y=-20; const phase=Math.random()*Math.PI*2; enemies.push({x,y,vx,vy,type,hp,cd,phase}); }
+    function spawnBoss(){ enemies.length=0; const boss={x:W/2,y:70,vx:1.2,vy:0,type:'boss',hp:40,cd:30,phase:0}; enemies.push(boss); showToast('Boss wave!'); }
+
+    function fire(){ if(!running||paused) return; if(player.fireCd>0) return; player.fireCd=player.fireRate; tone(760,0.05); if(player.spread){ bullets.push({x:player.x,y:player.y-10,vy:-6,dx:-1}); bullets.push({x:player.x,y:player.y-10,vy:-6,dx:0}); bullets.push({x:player.x,y:player.y-10,vy:-6,dx:1}); } else { bullets.push({x:player.x,y:player.y-10,vy:-7,dx:0}); } }
+    function enemyFire(ex,ey,spread=false){ tone(320,0.04,'square',0.015); ebullets.push({x:ex,y:ey,vy:2.2+level*0.1,dx:0}); if(spread){ ebullets.push({x:ex,y:ey,vy:2.2,dx:-0.8}); ebullets.push({x:ex,y:ey,vy:2.2,dx:0.8}); } }
+    function dropPower(x,y){ const kinds=['rapid','spread','shield','x2']; const kind=kinds[Math.floor(Math.random()*kinds.length)]; powerups.push({x,y,vy:1.4,kind}); }
+    function explode(x,y,c='#bcd1ff',n=12){ for(let i=0;i<n;i++){ particles.push({x,y,vx:(Math.random()-0.5)*3, vy:(Math.random()-0.5)*3, life:30+Math.random()*20, c}); } }
+
+    const keys={};
+    addEventListener('keydown', e=>{ if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','a','A','d','D','w','W','s','S',' '].includes(e.key)) e.preventDefault(); keys[e.key]=true; if(e.code==='Space') fire(); });
+    addEventListener('keyup', e=>{ keys[e.key]=false; if(e.key==='p'||e.key==='P'){ pauseGame(); } });
+    canvas.addEventListener('pointerdown', e=>{ const r=canvas.getBoundingClientRect(); const x=e.clientX-r.left; const y=e.clientY-r.top; if(y<r.height*0.35){ fire(); } else if(x<r.width/2) keys['ArrowLeft']=true; else keys['ArrowRight']=true; });
+    canvas.addEventListener('pointerup', ()=>{ keys['ArrowLeft']=false; keys['ArrowRight']=false; });
+
+    function drawShip(x,y){ g.save(); g.translate(x,y); g.fillStyle= '#00eaff'; g.beginPath(); g.moveTo(0,-10); g.lineTo(13,10); g.lineTo(-13,10); g.closePath(); g.fill(); g.fillStyle='#ff3fd1'; g.fillRect(-3,2,6,4); if(player.shield>0){ g.strokeStyle='rgba(124,255,91,.9)'; g.lineWidth=2; g.beginPath(); g.arc(0,2,16,0,Math.PI*2); g.stroke(); } g.restore(); }
+
+    const stars = Array.from({length:140},()=>({x:Math.random()*W,y:Math.random()*H,spd:0.4+Math.random()*1.4}));
+
+    function draw(){ g.clearRect(0,0,W,H); g.fillStyle='#060a1a'; g.fillRect(0,0,W,H); g.fillStyle='#bcd1ff'; stars.forEach(s=>{ g.fillRect(s.x,s.y,2,2); s.y+=s.spd; if(s.y>H) s.y=0; }); drawShip(player.x, player.y); g.fillStyle='#dff3ff'; bullets.forEach(b=>{ g.fillRect(b.x-2,b.y-6,4,10); }); g.fillStyle='#ffb4b4'; ebullets.forEach(b=>{ g.fillRect(b.x-2,b.y-2,4,6); }); enemies.forEach(e=>{ g.fillStyle= e.type==='boss'? '#ff5c93' : (e.type==='bomber'?'#ffd166':'#7cff5b'); g.fillRect(e.x-14,e.y-12,28,24); g.fillStyle='#0a0f23'; g.font='bold 10px Inter, monospace'; g.textAlign='center'; const label=e.type==='boss'?'BOSS':(e.type==='pursuer'?'Pursue':(e.type==='bomber'?'Bomber':'ZigZag')); g.fillText(label, e.x, e.y-14); }); powerups.forEach(p=>{ g.fillStyle = p.kind==='rapid'? '#ff3fd1' : p.kind==='spread'? '#00eaff' : p.kind==='shield'? '#7cff5b' : '#ffd166'; g.beginPath(); g.arc(p.x,p.y,8,0,Math.PI*2); g.fill(); g.fillStyle='#0a0f23'; g.font='bold 9px Inter'; g.textAlign='center'; g.fillText(p.kind.toUpperCase(), p.x, p.y+3); }); particles.forEach(pt=>{ g.fillStyle=pt.c; g.fillRect(pt.x,pt.y,2,2); }); }
+
+    function rectHit(ax,ay,aw,ah,bx,by,bw,bh){ return Math.abs(ax-bx) < (aw/2 + bw/2) && Math.abs(ay-by) < (ah/2 + bh/2); }
+
+    function step(){
+      // spawn
+      if(frame % Math.max(10, 60 - level*5) === 0) spawnEnemy();
+      if(frame % 180 === 0 && level % 4 === 0) spawnBoss();
+      // input
+      const ax = (keys['ArrowLeft']||keys['a']||keys['A']?-1:0) + (keys['ArrowRight']||keys['d']||keys['D']?1:0);
+      const ay = (keys['ArrowUp']||keys['w']||keys['W']?-1:0) + (keys['ArrowDown']||keys['s']||keys['S']?1:0);
+      player.x += ax*player.speed; player.x=Math.max(16, Math.min(W-16, player.x));
+      player.y += ay*player.speed; player.y=Math.max(40, Math.min(H-30, player.y));
+      if(player.fireCd>0) player.fireCd--; if(player.shield>0) player.shield--;
+      // move bullets
+      for(let i=bullets.length-1;i>=0;i--){ const b=bullets[i]; b.y += b.vy; b.x += (b.dx||0); if(b.y<-10) bullets.splice(i,1); }
+      for(let i=ebullets.length-1;i>=0;i--){ const b=ebullets[i]; b.y += b.vy; b.x += (b.dx||0); if(b.y>H+10) ebullets.splice(i,1); }
+      // enemy behavior
+      for(let i=enemies.length-1;i>=0;i--){ const e=enemies[i]; if(e.type==='zig'){ e.phase += 0.05; e.x += Math.sin(e.phase)*2.2; e.y += e.vy; if(e.cd--<=0){ e.cd=120; enemyFire(e.x,e.y); } } else if(e.type==='pursuer'){ const dir = Math.sign(player.x - e.x); e.x += dir*1.6; e.y += e.vy*1.1; if(e.cd--<=0){ e.cd=90; if(Math.random()<0.6) enemyFire(e.x,e.y,true); } } else if(e.type==='bomber'){ e.x += e.vx || (e.vx = (Math.random()<0.5?-1:1)*1.2); if(e.x<20||e.x>W-20) e.vx*=-1; e.y += e.vy*0.8; if(e.cd--<=0){ e.cd=70; enemyFire(e.x,e.y); } } else if(e.type==='boss'){ e.x += e.vx; if(e.x<60||e.x>W-60) e.vx*=-1; e.y = 70 + Math.sin(frame*0.02)*10; if(e.cd--<=0){ e.cd=20; enemyFire(e.x,e.y,true); } } if(e.y>H+30){ enemies.splice(i,1); continue; } }
+      // bullets→enemies
+      for(let i=enemies.length-1;i>=0;i--){ const e=enemies[i]; for(let j=bullets.length-1;j>=0;j--){ const b=bullets[j]; if(rectHit(e.x,e.y,28,24,b.x,b.y,4,10)){ bullets.splice(j,1); e.hp--; explode(b.x,b.y,'#fff',4); if(e.hp<=0){ score+= (e.type==='boss'?200:30); explode(e.x,e.y,'#ffd166',20); if(Math.random()<0.45) dropPower(e.x,e.y); enemies.splice(i,1); showTip(); break; } } } }
+      // damage to player
+      for(let i=ebullets.length-1;i>=0;i--){ const b=ebullets[i]; if(rectHit(player.x,player.y,28,18,b.x,b.y,4,6)){ if(player.shield<=0){ lives--; tone(200,0.12,'square',0.03); explode(player.x,player.y,'#ff8b8b',14); } else { explode(b.x,b.y,'#b4ffd9',8); } ebullets.splice(i,1); if(lives<=0){ running=false; draw(); overlay('Game Over — Click Reset to play again'); } } }
+      for(let i=enemies.length-1;i>=0;i--){ const e=enemies[i]; if(rectHit(player.x,player.y,28,18,e.x,e.y,28,24)){ if(player.shield<=0){ lives--; tone(200,0.12,'square',0.03); explode(player.x,player.y,'#ff8b8b',14); } else { explode(e.x,e.y,'#b4ffd9',12); enemies.splice(i,1); } if(lives<=0){ running=false; draw(); overlay('Game Over — Click Reset to play again'); } } }
+      // powerups
+      for(let i=powerups.length-1;i>=0;i--){ const p=powerups[i]; p.y+=p.vy; if(rectHit(player.x,player.y,28,18,p.x,p.y,12,12)){ if(p.kind==='rapid'){ player.fireRate=Math.max(4, player.fireRate-3); showToast('Rapid fire!'); } if(p.kind==='spread'){ player.spread=true; showToast('Spread shot!'); } if(p.kind==='shield'){ player.shield=600; showToast('Shield online'); } if(p.kind==='x2'){ score += 50; showToast('Bonus score +50'); } tone(820,0.08); powerups.splice(i,1); } else if(p.y>H+10){ powerups.splice(i,1); } }
+      // particles
+      for(let i=particles.length-1;i>=0;i--){ const pt=particles[i]; pt.x+=pt.vx; pt.y+=pt.vy; pt.life--; if(pt.life<=0) particles.splice(i,1); }
+      // level up
+      if(score/Math.max(1,level) > 200){ level++; showToast('Level '+level); }
+      document.getElementById('scorePill').textContent='Score: '+score; document.getElementById('livesPill').textContent='Lives: '+lives; document.getElementById('levelPill').textContent='Level: '+level;
+      draw();
+    }
+
+    // Game buttons
+    document.getElementById('btnStart').addEventListener('click', ()=>{ if(!started){ resetGame(); } startGame(); });
+    document.getElementById('btnPause').addEventListener('click', ()=> pauseGame());
+    document.getElementById('btnReset').addEventListener('click', ()=> resetGame());
+
+    resetGame();
+
+    /* ===== Quiz ===== */
+    const questions=[
+      {q:'Which is the strongest CV line?',o:['Worked on frontend performance','Improved LCP by ~50%','Reduced LCP 3.9s → 1.8s (−54%) via SSR; +6% sign‑ups','Responsible for site speed'],a:2,why:'Numbers + mechanism + meaning (M³).'},
+      {q:'Best follow‑up when you don\'t know an answer?',o:['Guess confidently','Blame prior team','Explain how you\'d find out and trade‑offs','Change topic'],a:2,why:'Show learning approach + reasoning.'},
+      {q:'What\'s useful for reliability?',o:['Idempotency + retries + DLQs','More standups','More PR reviewers','Bigger instances'],a:0,why:'Design patterns beat ceremony.'},
+      {q:'Signal of depth in system design?',o:['API names','Tech list','Trade‑offs & failure modes','Sprint velocity'],a:2,why:'Depth = reasoning about constraints.'},
+      {q:'Incident review should include…',o:['Blame','Root cause only','Runbooks, alerts, prevention steps','Ignore small ones'],a:2,why:'Turn incidents into resilience.'},
+      {q:'Interview story format recommended here?',o:['STAR','PRIME','SOAR','None'],a:1,why:'Problem, Reasoning, Impact, Method, Evidence.'},
+      {q:'Good metric for delivery?',o:['LOC/day','Commits/day','Lead time / MTTR','Story points'],a:2,why:'Lead time/MTTR map to flow.'},
+      {q:'Best practice for CV length?',o:['5 pages','1–2 pages','Only LinkedIn','1 page only'],a:1,why:'Enough depth, still concise.'}
+    ];
+    const qBox=document.getElementById('qBox'); const aBox=document.getElementById('aBox'); const rBox=document.getElementById('rBox');
+    function renderQuiz(){ aBox.innerHTML=''; const idx = quizState.i; if(idx>=questions.length){ qBox.innerHTML='<q>Done!</q>'; rBox.textContent='Great run. Want a review? Book a chat ↑'; return; } const Q=questions[idx]; qBox.innerHTML='<q>'+Q.q+'</q>'; Q.o.forEach((opt,i)=>{ const b=document.createElement('button'); b.className='opt'; b.textContent=opt; b.onclick=()=>grade(i); aBox.appendChild(b); }); }
+    function grade(i){ const Q=questions[quizState.i]; const opts=aBox.querySelectorAll('.opt'); opts.forEach((el,idx)=>{ el.disabled=true; el.classList.add(idx===Q.a?'correct':'wrong'); }); if(i===Q.a){ tone(800,0.08); } else { tone(200,0.12); } rBox.textContent=Q.why; setTimeout(()=>{ quizState.i++; renderQuiz(); }, 750); }
+    const quizState={i:0};
+    document.getElementById('startQuiz').addEventListener('click',()=>{ quizState.i=0; renderQuiz(); tone(600,0.08); });
+  </script>
+</body>
+</html>
